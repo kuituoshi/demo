@@ -24,7 +24,7 @@ pipeline {
                 container('kaniko') {
                   sh '''
                     timeTag=$(date "+%y.%m%d")
-                    /kaniko/executor --context ${WORKSPACE} --destination registry-intl-vpc.cn-hongkong.aliyuncs.com/batie/tomcat:shop-api.${GIT_BRANCH}.${timeTag}
+                    /kaniko/executor --context ${WORKSPACE} --destination registry-intl-vpc.cn-hongkong.aliyuncs.com/batie/springboot:shop-api.${GIT_BRANCH}.${timeTag}
                   '''
                   // build job: 'tdlib-core-uat', propagate: false
                 }
@@ -34,7 +34,7 @@ pipeline {
     post {
         failure {
             sh '''
-                echo "finished"
+                echo "failed"
             '''
 
         }
