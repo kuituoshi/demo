@@ -21,7 +21,7 @@ pipeline {
                 checkout([$class: 'GitSCM', 
                         branches: [[name: '*/master']], 
                         // extensions: [[$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]], 
-                        userRemoteConfigs: [[credentialsId: 'coding', 
+                        userRemoteConfigs: [[credentialsId: 'changel', 
                                                 url: 'git@github.com:kuituoshi/demo.git']]
                 ])
                 sh 'printenv'
