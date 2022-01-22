@@ -34,7 +34,7 @@ pipeline {
     post {
         failure {
             sh '''
-                echo "finished"
+                echo "failed"
             '''
 
         }
