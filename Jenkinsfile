@@ -18,12 +18,7 @@ pipeline {
     stages {
         stage('compile source') {
             steps {
-                checkout([$class: 'GitSCM', 
-                        branches: [[name: '*/master']], 
-                        // extensions: [[$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]], 
-                        userRemoteConfigs: [[credentialsId: 'changel', 
-                                                url: 'git@github.com:kuituoshi/demo.git']]
-                ])
+                checkout scm
                 sh 'printenv'
                 container('maven') {
                   sh '''
@@ -35,7 +30,7 @@ pipeline {
                   sh '''
                     printenv
                     #timeTag=$(date "+%y.%m%d")
-                    #/kaniko/executor --context ${WORK_HOME} --destination registry-intl-vpc.cn-hongkong.aliyuncs.com/batie/tomcat:test.${timeTag}
+                    #/kaniko/executor --context ${WORK_HOME} --destination registry-intl-vpc.cn-hongkong.aliyuncs.com/batie/tomcat:${GIT_BRANCH}.${timeTag}
                   '''
                   // build job: 'tdlib-core-uat', propagate: false
                 }
