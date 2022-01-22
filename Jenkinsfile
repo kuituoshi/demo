@@ -11,8 +11,7 @@ pipeline {
         yamlFile 'KubernetesPod.yaml'
       }
     }
-    environment {
-    }
+    
     stages {
         stage('compile source') {
             steps {
