@@ -49,17 +49,15 @@ pipeline {
         stage('deploy to k8s') {
             steps {
                 container('tools') {
-                    withKubeConfig([credentialsId: 'k8s-inner-jenkins-admin']) {
+                    kubeconfig(credentialsId: 'k8s-inner-jenkins-admin') {
                         sh '''
                           kubectl -n ${APP_NAMESPACE} set image deployment/${APP_PROJECT}-${APP_DESC} web=${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeVersion} --record
 
-                          # if timeVersion equel latest , pod will not update, so in here force app triggering a Restart
                           if [ ${timeVersion} == 'latest' ];then
                               kubectl -n ${APP_NAMESPACE} rollout restart deployment/${APP_PROJECT}-${APP_DESC}
                           fi
                         '''
                     }
-                  
                 }
             }
         }
