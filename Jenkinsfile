@@ -49,6 +49,7 @@ pipeline {
         stage('deploy to k8s') {
             steps {
                 container('tools') {
+                    
                   sh '''
                     kubectl -n ${APP_NAMESPACE} set image deployment/${APP_PROJECT}-${APP_DESC} web=${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeVersion} --record
 

@@ -27,7 +27,6 @@ spec:
         - sleep
         - "99d"
   restartPolicy: Never
-  serviceAccountName: jenkins-admin
   terminationGracePeriodSeconds: 30
   volumes:
     - name: maven-cache
