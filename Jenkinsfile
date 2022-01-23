@@ -40,8 +40,8 @@ pipeline {
                 container('kaniko') {
                   sh '''
                     timeTag=$(date "+%y.%m%d")
-                    /kaniko/executor --context ${WORKSPACE} --cache=true --destination ${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeTag}
-                    /kaniko/executor --context ${WORKSPACE} --cache=true --destination ${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.latest
+                    /kaniko/executor --context ${WORKSPACE} --cache --cache-copy-layers --destination ${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeTag}
+                    /kaniko/executor --context ${WORKSPACE} --cache --cache-copy-layers --destination ${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.latest
                   '''
                 }
             }
@@ -49,7 +49,7 @@ pipeline {
         stage('deploy to k8s') {
             steps {
                 container('tools') {
-                    withKubeConfig(credentialsId: 'k8s-inner-jenkins-admin') {
+                    withKubeConfig(credentialsId: 'k8s-inner-jenkins-admin', serverUrl: 'https://kubernetes.default') {
                         sh '''
                           kubectl -n ${APP_NAMESPACE} set image deployment/${APP_PROJECT}-${APP_DESC} web=${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeVersion} --record
 

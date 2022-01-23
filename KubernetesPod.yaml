@@ -21,6 +21,9 @@ spec:
       volumeMounts:
         - mountPath: /kaniko/.docker
           name: docker-config
+      volumeMounts:
+        - mountPath: /cache
+          name: kaniko-cache
     - name: tools
       image: registry-intl-vpc.cn-hongkong.aliyuncs.com/batie/jenkins:tools
       command:
@@ -32,6 +35,9 @@ spec:
     - name: maven-cache
       persistentVolumeClaim:
         claimName: maven-storage
+    - name: kaniko-cache
+      persistentVolumeClaim:
+        claimName: kaniko-cache
     - name: docker-config
       secret:
         secretName: aliyun-vpc-image
