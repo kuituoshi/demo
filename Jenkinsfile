@@ -20,6 +20,10 @@ pipeline {
         APP_DESC = 'api'
     }
 
+    parameters {
+        string(defaultValue: 'latest', description: 'time tag', name: 'timeVersion', trim: true)
+    }
+
     stages {
         stage('compile source') {
             steps {
@@ -37,6 +41,7 @@ pipeline {
                   sh '''
                     timeTag=$(date "+%y.%m%d")
                     /kaniko/executor --context ${WORKSPACE} --destination ${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeTag}
+                    /kaniko/executor --context ${WORKSPACE} --destination ${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.latest
                   '''
                 }
             }
@@ -45,9 +50,12 @@ pipeline {
             steps {
                 container('tools') {
                   sh '''
-                    timeTag=$(date "+%y.%m%d")
-                    kubectl -n ${APP_NAMESPACE} set image deployment/${APP_PROJECT}-${APP_DESC} web=${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeTag} --record
-                    #kubectl -n ${APP_NAMESPACE} rollout restart deployment/${APP_PROJECT}-${APP_DESC}
+                    kubectl -n ${APP_NAMESPACE} set image deployment/${APP_PROJECT}-${APP_DESC} web=${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeVersion} --record
+
+                    # if timeVersion equel latest , pod will not update, so in here force app triggering a Restart
+                    if [ ${timeVersion} == 'latest' ];then
+                        kubectl -n ${APP_NAMESPACE} rollout restart deployment/${APP_PROJECT}-${APP_DESC}
+                    fi
                   '''
                 }
             }
