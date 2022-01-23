@@ -21,7 +21,6 @@ spec:
       volumeMounts:
         - mountPath: /kaniko/.docker
           name: docker-config
-      volumeMounts:
         - mountPath: /cache
           name: kaniko-cache
     - name: tools
