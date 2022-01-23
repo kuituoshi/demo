@@ -52,6 +52,11 @@ pipeline {
             }
         }
         stage('deploy to k8s') {
+            when {
+                anyOf {
+                    environment name: 'release', value: 'false'
+                }
+            }
             steps {
                 container('tools') {
                     withKubeConfig(credentialsId: 'k8s-inner-jenkins-admin', serverUrl: 'https://kubernetes.default') {
