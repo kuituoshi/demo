@@ -41,10 +41,10 @@ pipeline {
                   sh '''
                     timeTag=$(date "+%y.%m%d")
                     /kaniko/executor --context ${WORKSPACE} --cache --cache-copy-layers \
-                                    --cache-repo ${APP_REGISTRY} \
+                                    --cache-repo ${APP_REGISTRY}/cache \
                                     --destination ${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeTag}
                     /kaniko/executor --context ${WORKSPACE} --cache --cache-copy-layers \
-                                    --cache-repo ${APP_REGISTRY} \
+                                    --cache-repo ${APP_REGISTRY}/cache \
                                     --destination ${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.latest
                   '''
                 }
