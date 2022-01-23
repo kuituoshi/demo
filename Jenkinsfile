@@ -12,6 +12,14 @@ pipeline {
       }
     }
     
+    environment {
+        APP_REGISTRY = 'registry-intl-vpc.cn-hongkong.aliyuncs.com/batie'
+        APP_NAMESPACE = 'shop-test'
+        APP_TYPE = 'springboot'
+        APP_PROJECT = 'shop'
+        APP_DESC = 'api'
+    }
+
     stages {
         stage('compile source') {
             steps {
@@ -21,12 +29,26 @@ pipeline {
                     mvn clean install -P runner
                   '''
                 }
+            }
+        }
+        stage('make image') {
+            steps {
                 container('kaniko') {
                   sh '''
                     timeTag=$(date "+%y.%m%d")
-                    /kaniko/executor --context ${WORKSPACE} --destination registry-intl-vpc.cn-hongkong.aliyuncs.com/batie/springboot:shop-api.${GIT_BRANCH}.${timeTag}
+                    /kaniko/executor --context ${WORKSPACE} --destination ${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeTag}
                   '''
-                  // build job: 'tdlib-core-uat', propagate: false
+                }
+            }
+        }
+        stage('deploy to k8s') {
+            steps {
+                container('tools') {
+                  sh '''
+                    timeTag=$(date "+%y.%m%d")
+                    kubectl -n ${APP_NAMESPACE} set image deployment/${APP_PROJECT}-${APP_DESC} web=${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeTag} --record
+                    #kubectl -n ${APP_NAMESPACE} rollout restart deployment/${APP_PROJECT}-${APP_DESC}
+                  '''
                 }
             }
         }

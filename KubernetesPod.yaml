@@ -21,7 +21,13 @@ spec:
       volumeMounts:
         - mountPath: /kaniko/.docker
           name: docker-config
+    - name: tools
+      image: registry-intl-vpc.cn-hongkong.aliyuncs.com/batie/jenkins:tools
+      command:
+        - sleep
+        - "99d"
   restartPolicy: Never
+  serviceAccountName: jenkins-admin
   terminationGracePeriodSeconds: 30
   volumes:
     - name: maven-cache
