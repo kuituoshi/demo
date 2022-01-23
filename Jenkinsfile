@@ -49,7 +49,7 @@ pipeline {
         stage('deploy to k8s') {
             steps {
                 container('tools') {
-                    withKubeConfig(credentialsId: 'k8s-inner-jenkins-admin') {
+                    withKubeConfig(credentialsId: 'k8s-inner-jenkins-admin', serverUrl: 'https://172.16.9.149:6443') {
                         sh '''
                           kubectl -n ${APP_NAMESPACE} set image deployment/${APP_PROJECT}-${APP_DESC} web=${APP_REGISTRY}/${APP_TYPE}:${APP_PROJECT}-${APP_DESC}.${GIT_BRANCH}.${timeVersion} --record
 
