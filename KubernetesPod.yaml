@@ -4,6 +4,9 @@ metadata:
   labels:
     app: java-jdk-8.144
 spec:
+  securityContext:
+    runAsUser: 0
+    fsGroup: 0
   containers:
     - command:
         - sleep
