@@ -34,6 +34,52 @@
             </build>
         </profile>
         <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>1.0.0</version>
+                        <!--将插件绑定在某个phase执行-->
+                        <executions>
+                            <execution>
+                                <id>build-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <!--指定生成的镜像名-->
+                            <imageName>${project.groupId}/${project.artifactId}</imageName>
+                            <!--指定标签-->
+                            <imageTags>
+                                <imageTag>${project.version}</imageTag>
+                            </imageTags>
+                            <baseImage>changel/springboot:8-openj9</baseImage>
+                            <!-- 指定 Dockerfile 路径-->
+                            <!--<dockerDirectory>docker</dockerDirectory>-->
+                            <resources>
+                                <resource>
+                                    <targetPath>/workdir/</targetPath>
+                                    <!--jar 包所在的路径  此处配置的 即对应 target 目录-->
+                                    <directory>${project.build.directory}</directory>
+                                    <!-- 需要包含的 jar包 ，这里对应的是 Dockerfile中添加的文件名　-->
+                                    <include>${project.build.finalName}.jar</include>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>runner</id>
             <build>
                 <plugins>
